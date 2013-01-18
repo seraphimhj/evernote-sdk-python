@@ -61,6 +61,7 @@ class Vnote():
                 UserStoreConstants.EDAM_VERSION_MAJOR,
                 UserStoreConstants.EDAM_VERSION_MINOR)
         print "Is my Evernote API version up to date? ", str(versionOK)
+        print "Your API version is ", str(UserStoreConstants.EDAM_VERSION_MAJOR), ".", str(UserStoreConstants.EDAM_VERSION_MINOR)
         print ""
         if not versionOK:
             return 1
@@ -111,9 +112,11 @@ class Vnote():
         The full ENML specification can be found in the Evernote API Overview
         at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
         '''
+        anote_content = open(anote["content"], "r").readlines()
         note.content = '<?xml version="1.0" encoding="UTF-8"?>'
         note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">'
-        note.content += '<en-note>' + anote["content"] + '<br/>'
+        # TODO: change content from plain text to html
+        note.content += '<en-note>' + anote_content + '<br/>'
         if anote.has_key("attachment"):
             note.content += '<en-media type="image/png" hash="' + hashHex + '"/>'
         note.content += '</en-note>'
@@ -163,9 +166,8 @@ if __name__ == "__main__":
     if options.add_flag:
         # Get file need to upload
         anote = {}
-        anote = eval(open(os.path.expanduser("~/.vnote"), 'r').read())  
+        anote = eval(open(os.path.expanduser("~/.vnote/index"), 'r').read())  
         vnote.add(anote)
-         
     """
     if options.dnoteid != 0:
         vnote.delete(options.dnoteid)
